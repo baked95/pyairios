@@ -46,9 +46,11 @@ from pyairios.exceptions import (
     AiriosIOException,
     AiriosNotImplemented,
 )
+from pyairios.models.brdg_02em23 import BRDG02EM23
 from pyairios.models.brdg_02r13 import BRDG02R13
 from pyairios.models.brdg_02r13 import DEFAULT_DEVICE_ID as BRDG02R13_DEFAULT_DEVICE_ID
 from pyairios.models.factory import factory
+from pyairios.models.vmd_15rms86 import VMD15RMS86
 from pyairios.models.vmd_02rps78 import VMD02RPS78
 from pyairios.models.vmd_07rps13 import VMD07RPS13
 from pyairios.models.vmn_05lm02 import VMN05LM02

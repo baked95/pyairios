@@ -1,4 +1,7 @@
-"""Airios BRDG-02R13 RS485 RF bridge implementation."""
+"""Airios BRDG-02EM23 UTP RF bridge implementation."""
+# TODO:
+# - change below to pymodbus tcp client methods
+# see https://pymodbus.readthedocs.io/en/latest/source/client.html
 
 from __future__ import annotations
 
@@ -48,7 +51,7 @@ LOGGER = logging.getLogger(__name__)
 
 def pr_id() -> ProductId:
     """
-    Get product_id for model BRDG-02R13.
+    Get product_id for model BRDG-02EM23.
     Named as is to discern from product_id register.
     :return: unique int
     """
@@ -64,15 +67,15 @@ def pr_type() -> AiriosDeviceType:
 
 def pr_description() -> list[str]:
     """
-    Get description of product(s) using BRDG-02R13.
+    Get description of product(s) using BRDG-02EM23.
     Human-readable text, used in e.g. HomeAssistant Binding UI.
     """
-    return ["Airios RS485 RF Gateway"]
+    return ["Airios TCP RF Gateway"]
 
 
-def pr_instantiate(device_id: int, client: AsyncAiriosModbusClient) -> BRDG02R13:
+def pr_instantiate(device_id: int, client: AsyncAiriosModbusClient) -> BRDG02EM23:
     """Get a new device instance. Used by the device factory to instantiate by product ID."""
-    return BRDG02R13(device_id, client)
+    return BRDG02EM23(device_id, client)
 
 
 def datetime_register(value: int) -> datetime.datetime:
@@ -82,11 +85,11 @@ def datetime_register(value: int) -> datetime.datetime:
     return datetime.datetime.fromtimestamp(value, tz=datetime.timezone.utc)
 
 
-class BRDG02R13(AiriosDevice):
-    """Represents a BRDG-02R13 RF bridge."""
+class BRDG02EM23(AiriosDevice):
+    """Represents a BRDG-02EM23 TCP RF bridge."""
 
     def __init__(self, device_id: int, client: AsyncAiriosModbusClient) -> None:
-        """Initialize the BRDG-02R13 RF bridge instance."""
+        """Initialize the BRDG-02EM23 RF bridge instance."""
 
         super().__init__(device_id, client)
         brdg_registers: List[RegisterBase] = [
@@ -174,7 +177,7 @@ class BRDG02R13(AiriosDevice):
         self._add_registers(brdg_registers)
 
     def __str__(self) -> str:
-        return f"BRDG-02R13@{self.device_id}"
+        return f"BRDG-02EM23@{self.device_id}"
 
     def pr_id(self) -> ProductId:
         return pr_id()
