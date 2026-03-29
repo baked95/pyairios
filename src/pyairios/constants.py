@@ -16,16 +16,19 @@ class AiriosDeviceType(Enum):
 class ProductId(IntEnum):
     """The product ID is a unique product identifier.
 
-    The value is composed by three fields, product type + sub ID + manufacturer ID.
+    The value is composed by three fields: product type + sub ID + manufacturer ID.
     """
 
     BRDG_02R13 = 0x0001C849
+    BRDG_02EM23 = 0x0001C800  # TODO fill in verified ID
     VMD_02RPS78 = 0x0001C892
     VMN_05LM02 = 0x0001C83E
     VMN_02LM11 = 0x0001C852
     VMD_07RPS13 = 0x0001C883
 
     def __str__(self) -> str:
+        if self.value == self.BRDG_02EM23:
+            return f"0x{self.value:08X} (BRDG-02EM23)"
         if self.value == self.BRDG_02R13:
             return f"0x{self.value:08X} (BRDG-02R13)"
         if self.value == self.VMD_02RPS78:

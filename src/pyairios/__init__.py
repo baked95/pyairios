@@ -16,6 +16,7 @@ from pyairios.device import AiriosDevice, AiriosBoundDeviceInfo
 from pyairios.exceptions import AiriosException
 from pyairios.models.brdg_02r13 import BRDG02R13
 from pyairios.models.brdg_02r13 import DEFAULT_DEVICE_ID as BRDG02R13_DEFAULT_DEVICE_ID
+from pyairios.models.brdg_02em23 import BRDG02EM23
 from pyairios.models.factory import factory
 from pyairios.properties import AiriosBridgeProperty as bp
 from pyairios.registers import Result
@@ -27,7 +28,7 @@ class Airios:
     """The Airios RF bridge API."""
 
     _client: AsyncAiriosModbusClient
-    bridge: BRDG02R13
+    bridge: BRDG02R13 | BRDG02EM23
 
     def __init__(
         self, transport: AiriosBaseTransport, device_id: int = BRDG02R13_DEFAULT_DEVICE_ID
@@ -36,12 +37,13 @@ class Airios:
         if isinstance(transport, AiriosTcpTransport):
             transport.__class__ = AiriosTcpTransport
             self._client = AsyncAiriosModbusTcpClient(transport)
+            self.bridge = BRDG02EM23(device_id, self._client)
         elif isinstance(transport, AiriosRtuTransport):
             transport.__class__ = AiriosRtuTransport
             self._client = AsyncAiriosModbusRtuClient(transport)
+            self.bridge = BRDG02R13(device_id, self._client)
         else:
             raise AiriosException(f"Unknown transport {transport}")
-        self.bridge = BRDG02R13(device_id, self._client)
 
     async def nodes(self) -> list[AiriosBoundDeviceInfo]:
         """Get the list of bound nodes."""
