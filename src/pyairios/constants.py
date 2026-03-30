@@ -40,6 +40,8 @@ class ProductId(IntEnum):
             return f"0x{self.value:08X} (VMN-02LM11)"
         if self.value == self.VMD_07RPS13:
             return f"0x{self.value:08X} (VMD-07RPS13)"
+        if self.value == self.VMD_15RPS86:
+            return f"0x{self.value:08X} (VMD-15RPS86)"
         raise ValueError(f"Unknown product ID value {self.value:08X}")
 
 
