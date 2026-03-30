@@ -10,7 +10,7 @@ license = { file="LICENSE" }
 keywords = ["Airios", "Siber", "RAMSES II", "ventilation", "heat-recovery", "modbus", "modbus-tcp", "modbus-rtu"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: Apache Software License",
     "Topic :: Home Automation",
     "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
