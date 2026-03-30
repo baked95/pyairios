@@ -20,11 +20,12 @@ class ProductId(IntEnum):
     """
 
     BRDG_02R13 = 0x0001C849
-    BRDG_02EM23 = 0x0001C800  # TODO fill in verified ID
+    BRDG_02EM23 = 0x0001C800  # TODO fill in a verified ID
     VMD_02RPS78 = 0x0001C892
     VMN_05LM02 = 0x0001C83E
     VMN_02LM11 = 0x0001C852
     VMD_07RPS13 = 0x0001C883
+    VMD_15RPS86 = 0x0001C8A2
 
     def __str__(self) -> str:
         if self.value == self.BRDG_02EM23:

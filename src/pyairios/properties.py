@@ -137,12 +137,16 @@ class AiriosVMDProperty(AiriosBaseProperty):
     TEMPERATURE_SUPPLY = auto()
     """Incoming air temperature after heat exchanger."""
 
+    TEMPERATURE_CONTROL_SETPOINT = auto()
+    """Supply Air to room temperature setpoint."""
+
     PREHEATER = auto()
     FILTER_DIRTY = auto()
     DEFROST = auto()
     BYPASS_POSITION = auto()
     HUMIDITY_INDOOR = auto()
     HUMIDITY_OUTDOOR = auto()
+    HUMIDITY_CONTROL_SETPOINT = auto()
     FLOW_INLET = auto()
     FLOW_OUTLET = auto()
     AIR_QUALITY = auto()
