@@ -326,7 +326,7 @@ class VMD15RMS86(AiriosNode):
             U16Register(vp.CO2_CONTROL_SETPOINT, 49017, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(
                 vp.TEMPERATURE_CONTROL_SETPOINT, 49017, RegisterAccess.READ | RegisterAccess.WRITE
-            ),
+            ),  # TODO fill in correct register
             # FloatRegister(
             #     vp.FROST_PROTECTION_PREHEATER_SETPOINT,
             #     42009,
