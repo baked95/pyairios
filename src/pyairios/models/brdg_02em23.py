@@ -55,7 +55,7 @@ def pr_id() -> ProductId:
     Named as is to discern from product_id register.
     :return: unique int
     """
-    return ProductId.BRDG_02R13
+    return ProductId.BRDG_02EM23
 
 
 def pr_type() -> AiriosDeviceType:

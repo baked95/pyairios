@@ -248,7 +248,7 @@ class VMD15RMS86(AiriosNode):
             U16Register(vp.BYPASS_STATUS, 41051, RegisterAccess.READ | RegisterAccess.STATUS),
             U16Register(
                 vp.REQUESTED_VENTILATION_SPEED,
-                41500,  # to be confirmed by remy
+                41500,
                 RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
             # U16Register(
@@ -325,8 +325,8 @@ class VMD15RMS86(AiriosNode):
             ),
             U16Register(vp.CO2_CONTROL_SETPOINT, 49017, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(
-                vp.TEMPERATURE_CONTROL_SETPOINT, 49017, RegisterAccess.READ | RegisterAccess.WRITE
-            ),  # TODO fill in correct register
+                vp.TEMPERATURE_CONTROL_SETPOINT, 49019, RegisterAccess.READ | RegisterAccess.WRITE
+            ),
             # FloatRegister(
             #     vp.FROST_PROTECTION_PREHEATER_SETPOINT,
             #     42009,
