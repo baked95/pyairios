@@ -20,7 +20,7 @@ class ProductId(IntEnum):
     """
 
     BRDG_02R13 = 0x0001C849
-    BRDG_02EM23 = 0x0001C800  # TODO fill in a verified ID
+    BRDG_02EM23 = 0x0001C848
     VMD_02RPS78 = 0x0001C892
     VMN_05LM02 = 0x0001C83E
     VMN_02LM11 = 0x0001C852
