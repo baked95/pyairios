@@ -13,17 +13,13 @@ from typing import List
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import (
     AiriosDeviceType,
-    Baudrate,
     BindingMode,
     BindingStatus,
     ModbusEvents,
-    Parity,
     ProductId,
     ResetMode,
     RFLoad,
     RFSentMessages,
-    SerialConfig,
-    StopBits,
 )
 from pyairios.device import AiriosDevice, AiriosBoundDeviceInfo
 from pyairios.exceptions import (
@@ -44,7 +40,7 @@ from pyairios.registers import (
     U32Register,
 )
 
-DEFAULT_DEVICE_ID = 207
+DEFAULT_DEVICE_ID = 1
 
 LOGGER = logging.getLogger(__name__)
 
@@ -113,10 +109,6 @@ class BRDG02EM23(AiriosDevice):
             U16Register(bp.MODBUS_EVENTS, 41103, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.RESET_DEVICE, 41107, RegisterAccess.WRITE),
             StringRegister(bp.CUSTOMER_SPECIFIC_NODE_ID, 41108, 10, RegisterAccess.WRITE),
-            U16Register(bp.SERIAL_PARITY, 41998, RegisterAccess.READ | RegisterAccess.WRITE),
-            U16Register(bp.SERIAL_STOP_BITS, 41999, RegisterAccess.READ | RegisterAccess.WRITE),
-            U16Register(bp.SERIAL_BAUDRATE, 42000, RegisterAccess.READ | RegisterAccess.WRITE),
-            U16Register(bp.MODBUS_DEVICE_ID, 42001, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.MESSAGES_SEND_CURRENT_HOUR, 42100, RegisterAccess.READ),
             U16Register(bp.MESSAGES_SEND_LAST_HOUR, 42101, RegisterAccess.READ),
             FloatRegister(bp.RF_LOAD_CURRENT_HOUR, 42102, RegisterAccess.READ),
@@ -423,35 +415,6 @@ class BRDG02EM23(AiriosDevice):
         r2 = await self.rf_sent_messages_last_hour()
         return RFSentMessages(messages_current_hour=r1.value, messages_last_hour=r2.value)
 
-    async def serial_config(self) -> SerialConfig:
-        """Get the serial configuration."""
-        result = await self.client.get_register(self.regmap[bp.SERIAL_BAUDRATE], self.device_id)
-        baudrate: Baudrate = Baudrate(result.value)
-        result = await self.client.get_register(self.regmap[bp.SERIAL_PARITY], self.device_id)
-        parity: Parity = Parity(result.value)
-        result = await self.client.get_register(self.regmap[bp.SERIAL_STOP_BITS], self.device_id)
-        stopbits: StopBits = StopBits(result.value)
-        return SerialConfig(baudrate=baudrate, stop_bits=stopbits, parity=parity)
-
-    async def set_serial_config(self, config: SerialConfig) -> bool:
-        """Set the serial configuration."""
-        return (
-            await self.client.set_register(
-                self.regmap[bp.SERIAL_BAUDRATE],
-                config.baudrate,
-                self.device_id,
-            )
-            and await self.client.set_register(
-                self.regmap[bp.SERIAL_PARITY],
-                config.parity,
-                self.device_id,
-            )
-            and await self.client.set_register(
-                self.regmap[bp.SERIAL_STOP_BITS],
-                config.stop_bits,
-                self.device_id,
-            )
-        )
 
     async def modbus_events(self) -> Result[ModbusEvents]:
         """Modbus event responses via special Modbus functions."""

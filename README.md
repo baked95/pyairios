@@ -32,10 +32,11 @@ Binding is only possible when products have the same *OEM code*. The RF bridge h
 
 This library has been tested with the following devices:
 
-* [Siber DF Optima 2](https://www.siberzone.es/descarga/siber-df-optima-2-19170/) ([Airios VMD-02RPS78](https://www.airios.eu/vmd-heat-recovery-unit-controller))
+* [Siber DF Evo 2 / DF Optima 2](https://www.siberzone.es/descarga/siber-df-optima-2-19170/) ([Airios VMD-02RPS78](https://www.airios.eu/vmd-heat-recovery-unit-controller))
 * [Siber 4 button remote](https://www.siberzone.es/descarga/mando-pulsador-inal%C3%81mbrico-4-posiciones-15462/) ([Airios VMN-02LM11](https://www.airios.eu/vmn-02lm11))
 * [ClimaRad Ventura V1X HRU](https://www.climarad.nl/) ([Airios VMD-07RPS13](https://www.airios.eu/vmd-heat-recovery-unit-controller))
 * [Orcon generic](https://www.orcon.nl/) ([Airios VMD-02EM23-2](https://www.airios.eu/vmd-heat-recovery-unit-controller))
+* Siber DFEVORFETH Ethernet bridge ([Airios BRDG-02EM23](https://www.airios.eu/brdg-02em23)), Modbus-TCP
 
 ## Installation
 
