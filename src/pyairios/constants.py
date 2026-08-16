@@ -25,7 +25,7 @@ class ProductId(IntEnum):
     VMN_05LM02 = 0x0001C83E
     VMN_02LM11 = 0x0001C852
     VMD_07RPS13 = 0x0001C883
-    VMD_15RPS86 = 0x0001C8A2
+    VMD_15RMS86 = 0x0001C8A2
 
     def __str__(self) -> str:
         if self.value == self.BRDG_02EM23:
@@ -40,8 +40,8 @@ class ProductId(IntEnum):
             return f"0x{self.value:08X} (VMN-02LM11)"
         if self.value == self.VMD_07RPS13:
             return f"0x{self.value:08X} (VMD-07RPS13)"
-        if self.value == self.VMD_15RPS86:
-            return f"0x{self.value:08X} (VMD-15RPS86)"
+        if self.value == self.VMD_15RMS86:
+            return f"0x{self.value:08X} (VMD-15RMS86)"
         raise ValueError(f"Unknown product ID value {self.value:08X}")
 
 
