@@ -1,4 +1,4 @@
-"""Airios VMD-15RPS86 controller implementation (generic Orcon)."""
+"""Airios VMD-15RMS86 controller implementation (generic Orcon)."""
 
 from __future__ import annotations
 
@@ -41,10 +41,10 @@ LOGGER = logging.getLogger(__name__)
 
 def pr_id() -> ProductId:
     """
-    Get product_id for model VMD_15RPS86.
+    Get product_id for model VMD_15RMS86.
     Named as is to discern from product_id register.
     """
-    return ProductId.VMD_15RPS86
+    return ProductId.VMD_15RMS86
 
 
 def pr_type() -> AiriosDeviceType:
@@ -56,7 +56,7 @@ def pr_type() -> AiriosDeviceType:
 
 def pr_description() -> list[str]:
     """
-    Get description of product(s) using VMD_15RPS86.
+    Get description of product(s) using VMD_15RMS86.
     Human-readable text, used in e.g. HomeAssistant Binding UI.
     :return: string or tuple of strings, starting with manufacturer
     """
