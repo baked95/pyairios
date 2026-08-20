@@ -6,7 +6,6 @@ import importlib.util
 import logging
 import os
 from types import ModuleType
-from typing import Dict
 
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import ProductId
@@ -22,7 +21,7 @@ LOGGER = logging.getLogger(__name__)
 class AiriosDeviceFactory:
     """Airios device factory."""
 
-    modules: Dict[ProductId, ModuleType]
+    modules: dict[ProductId, ModuleType]
     modules_loaded: bool
 
     def __init__(self) -> None:
@@ -117,7 +116,7 @@ class AiriosDeviceFactory:
 
         return len(self.modules)
 
-    async def models(self) -> Dict[ProductId, ModuleType]:
+    async def models(self) -> dict[ProductId, ModuleType]:
         """
         Util to fetch all supported models with their imported module class.
         Must call this async run_in_executor to prevent HA blocking call during file I/O.

@@ -50,7 +50,7 @@ def datetime_register(value: int) -> datetime.datetime:
     """Decode register bytes to value."""
     if value == 0xFFFFFFFF:
         raise ValueError("Unknown")
-    return datetime.datetime.fromtimestamp(value, tz=datetime.timezone.utc)
+    return datetime.datetime.fromtimestamp(value, tz=datetime.UTC)
 
 
 class BRDG02EM23(AiriosBridge):

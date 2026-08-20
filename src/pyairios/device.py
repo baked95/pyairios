@@ -7,7 +7,7 @@ import logging
 import struct
 from dataclasses import dataclass
 from enum import auto
-from typing import Any, Dict, List
+from typing import Any
 
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import (
@@ -101,8 +101,8 @@ class AiriosDevice:
 
     client: AsyncAiriosModbusClient
     device_id: int
-    registers: List[RegisterBase]
-    regmap: Dict[AiriosBaseProperty, RegisterBase]
+    registers: list[RegisterBase]
+    regmap: dict[AiriosBaseProperty, RegisterBase]
 
     def __init__(self, device_id: int, client: AsyncAiriosModbusClient) -> None:
         """Initialize the class instance."""
@@ -111,7 +111,7 @@ class AiriosDevice:
         self.registers = []
         self.regmap = {}
 
-        dev_registers: List[RegisterBase] = [
+        dev_registers: list[RegisterBase] = [
             U32Register(dp.RF_ADDRESS, 40000, RegisterAccess.READ),
             U32Register(dp.PRODUCT_ID, 40002, RegisterAccess.READ, result_type=ProductId),
             U16Register(dp.SOFTWARE_VERSION, 40004, RegisterAccess.READ),
@@ -157,10 +157,10 @@ class AiriosDevice:
         ]
         self._add_registers(dev_registers)
 
-    def _add_registers(self, reglist: List[RegisterBase]):
+    def _add_registers(self, reglist: list[RegisterBase]):
         self.registers.extend(reglist)
         self.registers.sort(key=lambda x: x.description.address)
-        self.regmap: Dict[AiriosBaseProperty, RegisterBase] = {
+        self.regmap: dict[AiriosBaseProperty, RegisterBase] = {
             regdesc.aproperty: regdesc for regdesc in self.registers
         }
 
@@ -192,7 +192,7 @@ class AiriosDevice:
 
     async def fetch(self, *, all_props=True, with_status=True) -> AiriosDeviceData:
         """Fetch all data."""
-        data: Dict[AiriosBaseProperty, Any] = {}
+        data: dict[AiriosBaseProperty, Any] = {}
 
         if not with_status:
             it = filter(lambda x: RegisterAccess.READ in x.description.access, self.registers)
@@ -299,7 +299,7 @@ class AiriosDevice:
         r = await self.client.get_register(self.regmap[PrivProp.RF_STATS_LENGTH], self.device_id)
         nrecs = r.value
         recs: list[RFStats.Record] = []
-        for i in range(0, nrecs):
+        for i in range(nrecs):
             ok = await self.client.set_register(
                 self.regmap[PrivProp.RF_STATS_INDEX], i, self.device_id
             )

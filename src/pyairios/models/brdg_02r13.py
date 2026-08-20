@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import datetime
 import logging
-from typing import List
 
 from pyairios.bridge import AiriosBridge
 from pyairios.client import AsyncAiriosModbusClient
@@ -61,7 +60,7 @@ def datetime_register(value: int) -> datetime.datetime:
     """Decode register bytes to value."""
     if value == 0xFFFFFFFF:
         raise ValueError("Unknown")
-    return datetime.datetime.fromtimestamp(value, tz=datetime.timezone.utc)
+    return datetime.datetime.fromtimestamp(value, tz=datetime.UTC)
 
 
 class BRDG02R13(AiriosBridge):
@@ -71,7 +70,7 @@ class BRDG02R13(AiriosBridge):
         """Initialize the BRDG-02R13 RF bridge instance."""
 
         super().__init__(device_id, client)
-        brdg_registers: List[RegisterBase] = [
+        brdg_registers: list[RegisterBase] = [
             U16Register(bp.SERIAL_PARITY, 41998, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.SERIAL_STOP_BITS, 41999, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.SERIAL_BAUDRATE, 42000, RegisterAccess.READ | RegisterAccess.WRITE),

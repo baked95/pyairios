@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import List
 
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import (
@@ -120,7 +119,7 @@ class VMD15RMS86(AiriosNode):
     def __init__(self, device_id: int, client: AsyncAiriosModbusClient) -> None:
         """Initialize the VMD-02RMS78 controller node instance."""
         super().__init__(device_id, client)
-        vmd_registers: List[RegisterBase] = [
+        vmd_registers: list[RegisterBase] = [
             U16Register(
                 vp.CURRENT_VENTILATION_SPEED, 41000, RegisterAccess.READ | RegisterAccess.STATUS
             ),

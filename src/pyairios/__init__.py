@@ -3,6 +3,7 @@
 import logging
 from typing import cast
 
+from pyairios.bridge import AiriosBridge
 from pyairios.client import (
     AiriosBaseTransport,
     AiriosRtuTransport,
@@ -13,8 +14,7 @@ from pyairios.client import (
 )
 from pyairios.constants import AiriosDeviceType, BindingStatus, ProductId
 from pyairios.data_model import AiriosData, AiriosDeviceData
-from pyairios.device import AiriosDevice, AiriosBoundDeviceInfo
-from pyairios.bridge import AiriosBridge
+from pyairios.device import AiriosBoundDeviceInfo, AiriosDevice
 from pyairios.exceptions import AiriosException, AiriosInvalidArgumentException
 from pyairios.models.brdg_02r13 import DEFAULT_DEVICE_ID as BRDG02R13_DEFAULT_DEVICE_ID
 from pyairios.models.factory import factory

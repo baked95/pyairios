@@ -2,9 +2,10 @@
 
 import datetime
 import logging
-import typing as t
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Flag, auto
+from typing import Any, TypeVar, cast
 
 from pymodbus.client.mixin import ModbusClientMixin
 
@@ -15,7 +16,8 @@ from .exceptions import AiriosDecodeError, AiriosInvalidArgumentException
 
 LOGGER = logging.getLogger(__name__)
 
-T = t.TypeVar("T")
+T = TypeVar("T")
+R = TypeVar("R")
 
 
 class RegisterAccess(Flag):
@@ -37,21 +39,21 @@ class RegisterDescription:
     max_value: int
 
 
-class RegisterBase(t.Generic[T]):
+class RegisterBase[T]:
     """Base class for register definitions."""
 
     description: RegisterDescription
     datatype: ModbusClientMixin.DATATYPE
     aproperty: AiriosBaseProperty
     result_type: type
-    result_adapter: t.Callable[[t.Any], t.Any] | None
+    result_adapter: Callable[[Any], Any] | None
 
     def __init__(
         self,
         description: RegisterDescription,
         ap: AiriosBaseProperty,
         result_type: type,
-        result_adapter: t.Callable[[t.Any], t.Any] | None,
+        result_adapter: Callable[[Any], Any] | None,
     ) -> None:
         """Initialize the register instance."""
         self.description = description
@@ -140,7 +142,7 @@ class NumberRegister(RegisterBase[T]):
 
     def decode(self, registers: list[int]) -> T:
         """Decode register bytes to value."""
-        result: T = t.cast(
+        result: T = cast(
             T,
             ModbusClientMixin.convert_from_registers(registers, self.datatype, word_order="little"),
         )
@@ -173,7 +175,7 @@ class U8Register(NumberRegister[int]):
         min_value=0,
         max_value=2**8 - 1,
         result_type: type = int,
-        result_adapter: t.Callable[[t.Any], t.Any] | None = None,
+        result_adapter: Callable[[Any], Any] | None = None,
     ) -> None:
         """Initialize the U8Register instance."""
         description = RegisterDescription(address, 1, access, min_value, max_value)
@@ -193,7 +195,7 @@ class U16Register(NumberRegister[int]):
         min_value=0,
         max_value=2**16 - 1,
         result_type: type = int,
-        result_adapter: t.Callable[[t.Any], t.Any] | None = None,
+        result_adapter: Callable[[Any], Any] | None = None,
     ) -> None:
         """Initialize the U16Register instance."""
         description = RegisterDescription(address, 1, access, min_value, max_value)
@@ -213,7 +215,7 @@ class I16Register(NumberRegister[int]):
         min_value=2**15 * -1,
         max_value=2**15 - 1,
         result_type: type = int,
-        result_adapter: t.Callable[[t.Any], t.Any] | None = None,
+        result_adapter: Callable[[Any], Any] | None = None,
     ) -> None:
         """Initialize the I16Register instance."""
         description = RegisterDescription(address, 1, access, min_value, max_value)
@@ -233,7 +235,7 @@ class U32Register(NumberRegister[int]):
         min_value=0,
         max_value=2**32 - 1,
         result_type: type = int,
-        result_adapter: t.Callable[[t.Any], t.Any] | None = None,
+        result_adapter: Callable[[Any], Any] | None = None,
     ) -> None:
         """Initialize the U32Register instance."""
         description = RegisterDescription(address, 2, access, min_value, max_value)
@@ -253,7 +255,7 @@ class FloatRegister(NumberRegister[float]):
         min_value=0,
         max_value=2**32 - 1,
         result_type: type = float,
-        result_adapter: t.Callable[[t.Any], t.Any] | None = None,
+        result_adapter: Callable[[Any], Any] | None = None,
     ) -> None:
         """Initialize the FloatRegister instance."""
         description = RegisterDescription(address, 2, access, min_value, max_value)
@@ -273,13 +275,13 @@ class ResultStatus:
 
 
 @dataclass
-class Result(t.Generic[T]):
+class Result[R]:
     """Register read result."""
 
-    value: T
+    value: R
     status: ResultStatus | None
 
-    def __init__(self, value: T, status: ResultStatus | None = None) -> None:
+    def __init__(self, value: R, status: ResultStatus | None = None) -> None:
         super().__init__()
         self.value = value
         self.status = status

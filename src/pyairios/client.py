@@ -28,8 +28,8 @@ from .exceptions import (
     AiriosConnectionException,
     AiriosConnectionInterruptedException,
     AiriosException,
-    AiriosIOException,
     AiriosInvalidArgumentException,
+    AiriosIOException,
     AiriosReadException,
     AiriosSlaveBusyException,
     AiriosSlaveFailureException,
@@ -281,7 +281,7 @@ class AsyncAiriosModbusClient:
 
     async def get_multiple(
         self,
-        regdesc: t.List[RegisterBase[T]],
+        regdesc: list[RegisterBase[T]],
         device_id: int,
     ) -> AiriosDeviceData:
         """Read multiple registers in one transaction. Does not fill Result.status"""
@@ -319,7 +319,7 @@ class AsyncAiriosModbusClient:
 
     async def _get_chunk(
         self,
-        chunk: t.List[RegisterBase[T]],
+        chunk: list[RegisterBase[T]],
         device_id: int,
     ) -> AiriosDeviceData:
         retval: AiriosDeviceData = {}
@@ -339,9 +339,9 @@ class AsyncAiriosModbusClient:
 
     async def _get_multiple(
         self,
-        regdesc: t.List[RegisterBase[T]],
+        regdesc: list[RegisterBase[T]],
         device_id: int,
-    ) -> t.List[T]:
+    ) -> list[T]:
         for i in range(1, len(regdesc)):
             prev = regdesc[i - 1].description
             curr = regdesc[i].description

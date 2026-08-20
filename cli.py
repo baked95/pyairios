@@ -51,9 +51,9 @@ from pyairios.models.brdg_02em23 import BRDG02EM23
 from pyairios.models.brdg_02r13 import BRDG02R13
 from pyairios.models.brdg_02r13 import DEFAULT_DEVICE_ID as BRDG02R13_DEFAULT_DEVICE_ID
 from pyairios.models.factory import factory
-from pyairios.models.vmd_15rms86 import VMD15RMS86
 from pyairios.models.vmd_02rps78 import VMD02RPS78
 from pyairios.models.vmd_07rps13 import VMD07RPS13
+from pyairios.models.vmd_15rms86 import VMD15RMS86
 from pyairios.models.vmn_05lm02 import VMN05LM02
 from pyairios.properties import AiriosBridgeProperty as bp
 from pyairios.properties import AiriosDeviceProperty as dp
@@ -83,7 +83,7 @@ def _print_device_data(res: AiriosDeviceData):
     print(f"    {'RF comm status:': <25}{res[dp.RF_COMM_STATUS]}")
     print(f"    {'Battery status:': <25}{res[dp.BATTERY_STATUS]}")
     print(f"    {'Fault status:': <25}{res[dp.FAULT_STATUS]}")
-    print("")
+    print()
 
 
 def _print_node_data(res: AiriosDeviceData):
@@ -92,7 +92,7 @@ def _print_node_data(res: AiriosDeviceData):
     print("---------")
     print(f"    {'Bound status:': <25}{res[np.BOUND_STATUS]}")
     print(f"    {'Value error status:': <25}{res[np.VALUE_ERROR_STATUS]}")
-    print("")
+    print()
 
 
 class AiriosVMN05LM02CLI(aiocmd.PromptToolkitCmd):
@@ -164,10 +164,8 @@ class AiriosVMD02RPS78CLI(aiocmd.PromptToolkitCmd):
 
         print(f"    {'Ventilation speed:': <25}{res[vmdp.CURRENT_VENTILATION_SPEED]}")
         print(
-            (
-                f"    {'Override remaining time:': <25}"
-                f"{res[vmdp.VENTILATION_SPEED_OVERRIDE_REMAINING_TIME]}"
-            )
+            f"    {'Override remaining time:': <25}"
+            f"{res[vmdp.VENTILATION_SPEED_OVERRIDE_REMAINING_TIME]}"
         )
 
         print(
@@ -195,7 +193,7 @@ class AiriosVMD02RPS78CLI(aiocmd.PromptToolkitCmd):
         print(f"    {'Defrost:': <25}{res[vmdp.DEFROST]}")
         print(f"    {'Preheater:': <25}{res[vmdp.PREHEATER]}")
         print(f"    {'Postheater:': <25}{res[vmdp.POSTHEATER]}")
-        print("")
+        print()
 
         print(f"    {'Preset speeds':<25}{'Supply':<10}{'Exhaust':<10}")
         print(f"    {'-------------':<25}")
@@ -215,7 +213,7 @@ class AiriosVMD02RPS78CLI(aiocmd.PromptToolkitCmd):
             f"    {'Away':<25}{str(res[vmdp.FAN_SPEED_AWAY_SUPPLY]) + ' %':<10}"
             f"{str(res[vmdp.FAN_SPEED_AWAY_EXHAUST]) + ' %':<10}"
         )
-        print("")
+        print()
 
         print("    Setpoints")
         print("    ---------")
@@ -225,10 +223,8 @@ class AiriosVMD02RPS78CLI(aiocmd.PromptToolkitCmd):
         )
         print(f"    {'Preheater setpoint:': <40}{res[vmdp.PREHEATER_SETPOINT]} ºC")
         print(
-            (
-                f"    {'Free ventilation setpoint:':<40}"
-                f"{res[vmdp.FREE_VENTILATION_HEATING_SETPOINT]} ºC"
-            )
+            f"    {'Free ventilation setpoint:':<40}"
+            f"{res[vmdp.FREE_VENTILATION_HEATING_SETPOINT]} ºC"
         )
         print(
             f"    {'Free ventilation cooling offset:':<40}"
@@ -509,12 +505,12 @@ class AiriosVMD07RPS13CLI(aiocmd.PromptToolkitCmd):
         print("----------------")
         print(f"    {'Product Variant:': <25}{res[vmdp.PRODUCT_VARIANT]}")
         print(f"    {'Error code:': <25}{res[vmdp.ERROR_CODE]}")
-        print("")
+        print()
         print(f"    {'Ventilation mode:': <25}{res[vmdp.VENTILATION_MODE]}")
         print(f"    {'Ventilation sub mode:': <25}{res[vmdp.VENTILATION_SUB_MODE]}")
         print(f"    {'Temp. Ventil. mode:': <25}{res[vmdp.TEMP_VENTILATION_MODE]}")
         print(f"    {'Temp. Ventil. sub mode:': <25}{res[vmdp.TEMP_VENTILATION_SUB_MODE]}")
-        #
+
         print(
             f"    {'Supply fan speed:': <25}{res[vmdp.FAN_SPEED_SUPPLY]}% "
             # f"({res['supply_fan_rpm']} RPM)"
@@ -540,7 +536,7 @@ class AiriosVMD07RPS13CLI(aiocmd.PromptToolkitCmd):
             }"
         )
         print(f"    {'Base ventil. enabled:': <25}{res[vmdp.BASIC_VENTILATION_ENABLE]}")
-        print("")
+        print()
 
         print("    Setpoints")
         print("    ---------")
@@ -580,10 +576,8 @@ class AiriosVMD15RMS86CLI(aiocmd.PromptToolkitCmd):
 
         print(f"    {'Ventilation speed:': <25}{res[vmdp.CURRENT_VENTILATION_SPEED]}")
         print(
-            (
-                f"    {'Override remaining time:': <25}"
-                f"{res[vmdp.VENTILATION_SPEED_OVERRIDE_REMAINING_TIME]}"
-            )
+            f"    {'Override remaining time:': <25}"
+            f"{res[vmdp.VENTILATION_SPEED_OVERRIDE_REMAINING_TIME]}"
         )
 
         print(
@@ -611,7 +605,7 @@ class AiriosVMD15RMS86CLI(aiocmd.PromptToolkitCmd):
         print(f"    {'Defrost:': <25}{res[vmdp.DEFROST]}")
         print(f"    {'Preheater:': <25}{res[vmdp.PREHEATER]}")
         print(f"    {'Postheater:': <25}{res[vmdp.POSTHEATER]}")
-        print("")
+        print()
 
         print(f"    {'Preset speeds':<25}{'Supply':<10}{'Exhaust':<10}")
         print(f"    {'-------------':<25}")
@@ -631,7 +625,7 @@ class AiriosVMD15RMS86CLI(aiocmd.PromptToolkitCmd):
             f"    {'Away':<25}{str(res[vmdp.FAN_SPEED_AWAY_SUPPLY]) + ' %':<10}"
             f"{str(res[vmdp.FAN_SPEED_AWAY_EXHAUST]) + ' %':<10}"
         )
-        print("")
+        print()
 
         print("    Setpoints")
         print("    ---------")
@@ -641,10 +635,8 @@ class AiriosVMD15RMS86CLI(aiocmd.PromptToolkitCmd):
         )
         print(f"    {'Preheater setpoint:': <40}{res[vmdp.PREHEATER_SETPOINT]} ºC")
         print(
-            (
-                f"    {'Free ventilation setpoint:':<40}"
-                f"{res[vmdp.FREE_VENTILATION_HEATING_SETPOINT]} ºC"
-            )
+            f"    {'Free ventilation setpoint:':<40}"
+            f"{res[vmdp.FREE_VENTILATION_HEATING_SETPOINT]} ºC"
         )
         # print(
         #     f"    {'Free ventilation cooling offset:':<40}"

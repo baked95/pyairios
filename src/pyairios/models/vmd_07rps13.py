@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import List
 
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import (
@@ -134,7 +133,7 @@ class VMD07RPS13(AiriosNode):
     def __init__(self, device_id: int, client: AsyncAiriosModbusClient) -> None:
         """Initialize the VMD-07RPS13 Ventura controller node instance."""
         super().__init__(device_id, client)
-        vmd_registers: List[RegisterBase] = [
+        vmd_registers: list[RegisterBase] = [
             FloatRegister(
                 vp.TEMPERATURE_OUTLET,
                 41000,
@@ -338,9 +337,7 @@ class VMD07RPS13(AiriosNode):
     async def set_ventilation_speed(self, speed: VMDRequestedVentilationSpeed) -> bool:
         """Set the ventilation unit speed (temp 8H) preset."""
         md = 0  # VMDVentilationSpeed.OFF, PAUSE?
-        if speed == VMDRequestedVentilationSpeed.AUTO:
-            md = 0
-        elif speed == VMDRequestedVentilationSpeed.AWAY:
+        if speed in (VMDRequestedVentilationSpeed.AUTO, VMDRequestedVentilationSpeed.AWAY):
             md = 0
         elif speed == VMDRequestedVentilationSpeed.LOW:
             md = 202

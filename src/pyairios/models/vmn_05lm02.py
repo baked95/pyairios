@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from typing import List
 
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import AiriosDeviceType, ProductId, VMDRequestedVentilationSpeed
@@ -55,7 +54,7 @@ class VMN05LM02(AiriosNode):
     def __init__(self, device_id: int, client: AsyncAiriosModbusClient) -> None:
         """Initialize the VMN-05LM02 node instance."""
         super().__init__(device_id, client)
-        vmn_registers: List[RegisterBase] = [
+        vmn_registers: list[RegisterBase] = [
             U16Register(
                 dp.REQUESTED_VENTILATION_SPEED, 41000, RegisterAccess.READ | RegisterAccess.STATUS
             ),

@@ -3,7 +3,6 @@
 import datetime
 import logging
 from datetime import timedelta
-from typing import List
 
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import (
@@ -41,7 +40,7 @@ def datetime_register(value: int) -> datetime.datetime:
     """Decode register bytes to value."""
     if value == 0xFFFFFFFF:
         raise ValueError("Unknown")
-    return datetime.datetime.fromtimestamp(value, tz=datetime.timezone.utc)
+    return datetime.datetime.fromtimestamp(value, tz=datetime.UTC)
 
 
 class AiriosBridge(AiriosDevice):
@@ -51,7 +50,7 @@ class AiriosBridge(AiriosDevice):
         """Initialize the BRDG-02R13 RF bridge instance."""
 
         super().__init__(device_id, client)
-        brdg_registers: List[RegisterBase] = [
+        brdg_registers: list[RegisterBase] = [
             U16Register(bp.CUSTOMER_PRODUCT_ID, 40023, RegisterAccess.READ | RegisterAccess.WRITE),
             U32Register(
                 bp.UTC_TIME,
@@ -245,10 +244,10 @@ class AiriosBridge(AiriosDevice):
             self.regmap[bp.BINDING_COMMAND], value, self.device_id
         )
 
-    async def nodes(self) -> List[AiriosBoundDeviceInfo]:
+    async def nodes(self) -> list[AiriosBoundDeviceInfo]:
         """Get the list of bound nodes."""
 
-        reg_descs: List[RegisterBase] = [
+        reg_descs: list[RegisterBase] = [
             self.regmap[bp.ADDRESS_NODE_1],
             self.regmap[bp.ADDRESS_NODE_2],
             self.regmap[bp.ADDRESS_NODE_3],
@@ -285,7 +284,7 @@ class AiriosBridge(AiriosDevice):
 
         values = await self.client.get_multiple(reg_descs, self.device_id)
 
-        nodes: List[AiriosBoundDeviceInfo] = []
+        nodes: list[AiriosBoundDeviceInfo] = []
         for item in values.values():
             device_id = item.value
             if device_id == 0:

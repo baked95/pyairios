@@ -1,9 +1,8 @@
 """RF node implementation."""
 
-import logging
 import datetime
+import logging
 from enum import auto
-from typing import List
 
 from pyairios.client import AsyncAiriosModbusClient
 from pyairios.constants import ProductId
@@ -38,7 +37,7 @@ def datetime_register(value: int) -> datetime.datetime:
     """Decode register bytes to value."""
     if value == 0xFFFFFFFF:
         raise ValueError("Unknown")
-    return datetime.datetime.fromtimestamp(value, tz=datetime.timezone.utc)
+    return datetime.datetime.fromtimestamp(value, tz=datetime.UTC)
 
 
 class AiriosNode(AiriosDevice):
@@ -47,7 +46,7 @@ class AiriosNode(AiriosDevice):
     def __init__(self, device_id: int, client: AsyncAiriosModbusClient) -> None:
         """Initialize the node class instance."""
         super().__init__(device_id, client)
-        node_registers: List[RegisterBase] = [
+        node_registers: list[RegisterBase] = [
             U32Register(np.RECEIVED_PRODUCT_ID, 40021, RegisterAccess.READ, result_type=ProductId),
             U16Register(np.VALUE_ERROR_STATUS, 40104, RegisterAccess.READ),
             I16Register(np.RF_LAST_RSSI, 40109, RegisterAccess.READ),
