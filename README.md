@@ -37,6 +37,8 @@ These are the OEM codes used by the different manufacturers. The value is hexade
 
 | Manufacturer | OEM code (hex) |
 |--------------|:--------------:|
+| Vasco        | 0x66           |
+| Orcon        | 0x67           |
 | Siber        | 0x6A           |
 
 ## Supported devices
