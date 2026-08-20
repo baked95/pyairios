@@ -72,7 +72,6 @@ class AiriosBridge(AiriosDevice):
             U16Register(bp.MODBUS_EVENTS, 41103, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.RESET_DEVICE, 41107, RegisterAccess.WRITE),
             StringRegister(bp.CUSTOMER_SPECIFIC_NODE_ID, 41108, 10, RegisterAccess.WRITE),
-            U16Register(bp.MODBUS_DEVICE_ID, 42001, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.MESSAGES_SEND_CURRENT_HOUR, 42100, RegisterAccess.READ),
             U16Register(bp.MESSAGES_SEND_LAST_HOUR, 42101, RegisterAccess.READ),
             FloatRegister(bp.RF_LOAD_CURRENT_HOUR, 42102, RegisterAccess.READ),

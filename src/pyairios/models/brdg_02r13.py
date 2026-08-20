@@ -75,6 +75,7 @@ class BRDG02R13(AiriosBridge):
             U16Register(bp.SERIAL_PARITY, 41998, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.SERIAL_STOP_BITS, 41999, RegisterAccess.READ | RegisterAccess.WRITE),
             U16Register(bp.SERIAL_BAUDRATE, 42000, RegisterAccess.READ | RegisterAccess.WRITE),
+            U16Register(bp.MODBUS_DEVICE_ID, 42001, RegisterAccess.READ | RegisterAccess.WRITE),
         ]
         self._add_registers(brdg_registers)
 
