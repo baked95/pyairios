@@ -28,7 +28,7 @@ class Airios:
     """The Airios RF bridge API."""
 
     _client: AsyncAiriosModbusClient
-    _bridge: AiriosBridge
+    _bridge: AiriosBridge | None
     _bridge_address: int
 
     def __init__(
@@ -44,6 +44,7 @@ class Airios:
         else:
             raise AiriosException(f"Unknown transport {transport}")
         self._bridge_address = device_id
+        self._bridge = None
 
     async def bridge(self) -> AiriosBridge:
         """Return cached bridge instance or get one from the factory."""
