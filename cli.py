@@ -54,12 +54,14 @@ from pyairios.models.factory import factory
 from pyairios.models.vmd_02rps78 import VMD02RPS78
 from pyairios.models.vmd_07rps13 import VMD07RPS13
 from pyairios.models.vmd_15rms86 import VMD15RMS86
+from pyairios.models.vmd_17rps01 import VMD17RPS01
 from pyairios.models.vmn_05lm02 import VMN05LM02
 from pyairios.properties import AiriosBridgeProperty as bp
 from pyairios.properties import AiriosDeviceProperty as dp
 from pyairios.properties import AiriosNodeProperty as np
 from pyairios.properties import AiriosVMDProperty as vmdp
 from pyairios.properties import AiriosVMNProperty as vmnp
+from pyairios.registers import RegisterAccess, U16Register
 
 LOGGER = logging.getLogger(__name__)
 
@@ -93,6 +95,56 @@ def _print_node_data(res: AiriosDeviceData):
     print(f"    {'Bound status:': <25}{res[np.BOUND_STATUS]}")
     print(f"    {'Value error status:': <25}{res[np.VALUE_ERROR_STATUS]}")
     print()
+
+
+class AiriosVMD17RPS01CLI(aiocmd.PromptToolkitCmd):
+    """The VMD17RPS01 CLI interface."""
+
+    vmd: VMD17RPS01
+
+    def __init__(self, vmd: AiriosDevice) -> None:
+        super().__init__()
+        self.prompt = f"[VMD-17RPS01@{vmd.device_id}]>> "
+        self.vmd = cast(VMD17RPS01, vmd)
+
+    async def do_status(self) -> None:
+        """Print the device status."""
+        res = await self.vmd.fetch(with_status=False)
+
+        _print_node_data(res)
+
+        print("VMD-17RPS01 data")
+        print("----------------")
+        print(f"    {'Ventilation speed:': <25}{res[vmdp.CURRENT_VENTILATION_SPEED]}")
+        print(f"    {'Supply fan speed:': <25}{res[vmdp.FAN_SPEED_SUPPLY]}%")
+        print(f"    {'Exhaust fan speed:': <25}{res[vmdp.FAN_SPEED_EXHAUST]}%")
+        print(f"    {'Inlet temperature:': <25}{res[vmdp.TEMPERATURE_INLET]}")
+        print(f"    {'Supply temperature:': <25}{res[vmdp.TEMPERATURE_SUPPLY]}")
+        print(f"    {'Exhaust temperature:': <25}{res[vmdp.TEMPERATURE_EXHAUST]}")
+        print(f"    {'Outlet temperature:': <25}{res[vmdp.TEMPERATURE_OUTLET]}")
+        print(f"    {'Bypass position:': <25}{res[vmdp.BYPASS_POSITION]}")
+        print()
+
+    async def do_ventilation_speed(self) -> None:
+        """Print the current ventilation speed, as reported by register 41003."""
+        try:
+            res = await self.vmd.ventilation_speed()
+            print(f"{res.value} (raw {int(res.value)})")
+        except ValueError as ex:
+            # 41003 answered something that is not a VMDVentilationSpeed member. Show the
+            # raw value instead of failing: it is the open question on this model.
+            reg = U16Register(vmdp.CURRENT_VENTILATION_SPEED, 41003, RegisterAccess.READ)
+            raw = await self.vmd.client.get_register(reg, self.vmd.device_id)
+            print(f"raw {raw.value}, not a VMDVentilationSpeed member ({ex})")
+
+    async def do_set_ventilation_speed(self, preset: str) -> None:
+        """Change the ventilation speed: off, away, low, mid, high, auto or boost."""
+        s = VMDRequestedVentilationSpeed.parse(preset)
+        await self.vmd.set_ventilation_speed(s)
+
+    async def do_bypass_position(self) -> None:
+        """Print the bypass position: 0 closed, 100 open."""
+        print(await self.vmd.bypass_position())
 
 
 class AiriosVMN05LM02CLI(aiocmd.PromptToolkitCmd):
@@ -796,6 +848,8 @@ class AiriosSerialBridgeCLI(aiocmd.PromptToolkitCmd):
             await AiriosVMD07RPS13CLI(dev).run()
         elif node_info.product_id == ProductId.VMD_15RMS86:
             await AiriosVMD15RMS86CLI(dev).run()
+        elif node_info.product_id == ProductId.VMD_17RPS01:
+            await AiriosVMD17RPS01CLI(dev).run()
         elif node_info.product_id == ProductId.VMN_05LM02:
             await AiriosVMN05LM02CLI(dev).run()
         else:
@@ -963,6 +1017,8 @@ class AiriosEthernetBridgeCLI(aiocmd.PromptToolkitCmd):
             await AiriosVMD07RPS13CLI(dev).run()
         elif node_info.product_id == ProductId.VMD_15RMS86:
             await AiriosVMD15RMS86CLI(dev).run()
+        elif node_info.product_id == ProductId.VMD_17RPS01:
+            await AiriosVMD17RPS01CLI(dev).run()
         elif node_info.product_id == ProductId.VMN_05LM02:
             await AiriosVMN05LM02CLI(dev).run()
         else:
