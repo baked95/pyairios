@@ -39,14 +39,15 @@ class AiriosDeviceFactory:
             await self.load_models()
 
         dev = AiriosDevice(address, client)
-        result = await dev.device_product_id()
-        product_id = result.value
+        product_id = None
         try:
+            result = await dev.device_product_id()
+            product_id = result.value
             mod = self.modules[product_id]
             return mod.pr_instantiate(address, client)
-        except ValueError as ex:
-            raise AiriosUnknownProductException(f"Unknown product ID 0x{product_id:08X}") from ex
-        except KeyError as ex:
+        except (ValueError, KeyError) as ex:
+            if product_id is None:
+                raise AiriosUnknownProductException(f"Unknown product ID: {ex}") from ex
             raise AiriosUnknownProductException(f"Unknown product ID 0x{product_id:08X}") from ex
 
     async def get_device_by_product_id(

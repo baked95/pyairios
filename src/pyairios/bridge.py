@@ -19,6 +19,7 @@ from pyairios.exceptions import (
     AiriosBindingException,
     AiriosException,
     AiriosInvalidArgumentException,
+    AiriosUnknownProductException,
 )
 from pyairios.models.factory import factory
 from pyairios.properties import AiriosBridgeProperty as bp
@@ -290,23 +291,33 @@ class AiriosBridge(AiriosDevice):
             if device_id == 0:
                 continue
 
-            result = await self.client.get_register(self.regmap[dp.PRODUCT_ID], device_id)
+            try:
+                result = await self.client.get_register(self.regmap[dp.PRODUCT_ID], device_id)
+            except ValueError as ex:
+                LOGGER.warning(
+                    "Skipping node on Modbus address %s, unsupported product ID: %s",
+                    device_id,
+                    ex,
+                )
+                continue
             if result is None or result.value is None:
                 continue
-            try:
-                product_id = ProductId(result.value)
-            except ValueError:
-                LOGGER.warning("Unknown product ID %s", result.value)
-                continue
-            else:
-                product_id = ProductId(result.value)
+            product_id = ProductId(result.value)
 
             result = await self.client.get_register(self.regmap[dp.RF_ADDRESS], device_id)
             if result is None or result.value is None:
                 continue
             rf_address = result.value
 
-            dev = await factory.get_device_by_product_id(product_id, device_id, self.client)
+            try:
+                dev = await factory.get_device_by_product_id(product_id, device_id, self.client)
+            except AiriosUnknownProductException:
+                LOGGER.warning(
+                    "Skipping node on Modbus address %s, no model implemented for %s",
+                    device_id,
+                    product_id,
+                )
+                continue
 
             info = AiriosBoundDeviceInfo(
                 modbus_address=device_id,

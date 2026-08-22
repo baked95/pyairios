@@ -26,6 +26,7 @@ class ProductId(IntEnum):
     VMN_02LM11 = 0x0001C852
     VMD_07RPS13 = 0x0001C883
     VMD_15RMS86 = 0x0001C8A2
+    VMD_17RPS01 = 0x0001C83A
 
     def __str__(self) -> str:  # pylint: disable=too-many-return-statements,too-many-branches
         if self.value == self.BRDG_02EM23:
@@ -42,6 +43,8 @@ class ProductId(IntEnum):
             return f"0x{self.value:08X} (VMD-07RPS13)"
         if self.value == self.VMD_15RMS86:
             return f"0x{self.value:08X} (VMD-15RMS86)"
+        if self.value == self.VMD_17RPS01:
+            return f"0x{self.value:08X} (VMD-17RPS01)"
         raise ValueError(f"Unknown product ID value {self.value:08X}")
 
 
