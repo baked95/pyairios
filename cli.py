@@ -125,6 +125,32 @@ class AiriosVMD17RPS01CLI(aiocmd.PromptToolkitCmd):
         print(f"    {'Bypass position:': <25}{res[vmdp.BYPASS_POSITION]}")
         print()
 
+        print("Configuration")
+        print("-------------")
+        print(f"    {'Bypass room threshold:': <30}{res[vmdp.FREE_VENTILATION_HEATING_SETPOINT]}")
+        print(
+            f"    {'Pre-heater activation:': <30}"
+            f"{res[vmdp.FROST_PROTECTION_PREHEATER_SETPOINT]}"
+        )
+        print(f"    {'Minimum supply temperature:': <30}{res[vmdp.PREHEATER_SETPOINT]}")
+        print(
+            f"    {'Low preset (supply/exhaust):': <30}"
+            f"{res[vmdp.FAN_SPEED_LOW_SUPPLY]} / {res[vmdp.FAN_SPEED_LOW_EXHAUST]}"
+        )
+        print(
+            f"    {'Mid preset (supply/exhaust):': <30}"
+            f"{res[vmdp.FAN_SPEED_MID_SUPPLY]} / {res[vmdp.FAN_SPEED_MID_EXHAUST]}"
+        )
+        print(
+            f"    {'High preset (pair):': <30}"
+            f"{res[vmdp.FAN_SPEED_HIGH_SUPPLY]} / {res[vmdp.FAN_SPEED_HIGH_EXHAUST]} m3/h"
+        )
+        print()
+
+    async def do_set_bypass_threshold(self, degrees: str) -> None:
+        """Set the room temperature above which the bypass opens, in degrees Celsius."""
+        await self.vmd.set_free_ventilation_setpoint(float(degrees))
+
     async def do_ventilation_speed(self) -> None:
         """Print the current ventilation speed, as reported by register 41003."""
         try:
@@ -133,7 +159,7 @@ class AiriosVMD17RPS01CLI(aiocmd.PromptToolkitCmd):
         except ValueError as ex:
             # 41003 answered something that is not a VMDVentilationSpeed member. Show the
             # raw value instead of failing: it is the open question on this model.
-            reg = U16Register(vmdp.CURRENT_VENTILATION_SPEED, 41003, RegisterAccess.READ)
+            reg = U16Register(vmdp.CURRENT_VENTILATION_SPEED, 41003, RegisterAccess.READ)  # raw
             raw = await self.vmd.client.get_register(reg, self.vmd.device_id)
             print(f"raw {raw.value}, not a VMDVentilationSpeed member ({ex})")
 
