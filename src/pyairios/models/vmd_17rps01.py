@@ -9,7 +9,7 @@ Register map reported and verified on real hardware by @PiotrOrman against a Vas
 cross-checked against the Vasco Climate Control app:
 
   41003        current ventilation speed, own 0-5 scale (see _ventilation_speed_adapter)
-  41005/41006  supply / exhaust fan percentage
+  41005/41006  exhaust / supply fan percentage (crossed against the config block, verified)
   41007/41009  float sensor slots, not fitted on this unit
   41011        temperature, exhaust (extracted from the home, before the exchanger)
   41013        temperature, inlet (taken from outside, before the exchanger)
@@ -49,9 +49,13 @@ rather than of the fan maximum, and high as an absolute airflow in m3/h, which i
 the high pair, and whether the percentage base is really the high preset, are pending a
 write-then-readback test.
 
-The 42xxx registers are declared WITHOUT RegisterAccess.STATUS: 51003 and 51011 were verified
-to respond (both 0x1107), so the 41xxx status registers are safe, but nothing in the 52xxx
-range has been probed yet.
+Value status is available on both blocks: 51003 and 51011 answer 0x1107, 52003, 52008, 52010
+and 52012 answer 0x1102, and a full fetch(all_props=True, with_status=True) completes on
+hardware. RegisterAccess.STATUS is therefore set on every readable register.
+
+The percentage in the low and mid presets is relative to the HIGH preset, not to the fan
+maximum: setting the mid supply preset to 90 produced a running 68%, which is 90% of the
+325 m3/h high setting expressed against this fan's absolute maximum. Verified on hardware.
 """
 
 from __future__ import annotations
@@ -126,14 +130,21 @@ def _temperature_adapter(value: float) -> VMDTemperature:
 # writing each preset to 41500 and reading 41003 back on real hardware:
 #     write 0 Off -> 0     write 1 Away -> 1     write 2 Low  -> 1
 #     write 3 Mid -> 2     write 4 High -> 3     write 7 Boost -> 5
-# Away and Low are indistinguishable because this unit has no away preset (see the note on
-# registers 42001/42002 above), so 1 maps to LOW.
+#
+# Away and Low are indistinguishable because this unit has no away preset. Verified twice:
+# registers 42001/42002 (the away pair on the VMD-02RPS78) are absent, and forcing 42016 to
+# 45 and then requesting away moved the fans not at all, they stayed at 21%. So 1 is LOW.
+#
+# Code 5 is DELIBERATELY NOT MAPPED. A boost request produces it, but it is not a boost: it
+# was polled for 15 minutes and never timed out, and it settles at 70%, below High's 76%. It
+# is some sustained mode, and 5 also happens to be the value of AUTO in the write enum, but
+# there is no evidence for AUTO specifically. Reading it raises, so fetch() reports the
+# property as missing rather than showing a wrong label, and the CLI prints the raw code.
 _VENTILATION_SPEED_CODES = {
     0: VMDVentilationSpeed.OFF,
     1: VMDVentilationSpeed.LOW,
     2: VMDVentilationSpeed.MID,
     3: VMDVentilationSpeed.HIGH,
-    5: VMDVentilationSpeed.BOOST,
 }
 
 
@@ -173,11 +184,15 @@ class VMD17RPS01(AiriosNode):
                 RegisterAccess.READ | RegisterAccess.STATUS,
                 result_adapter=_ventilation_speed_adapter,
             ),
+            # Exhaust first, then supply, as on the VMD-02RPS78 (41001/41002). The running
+            # block and the configuration block are crossed on this family: writing the mid
+            # supply preset (42005) moves 41006 and writing the mid exhaust preset (42006)
+            # moves 41005, verified on hardware.
             U16Register(
-                vp.FAN_SPEED_SUPPLY, 41005, RegisterAccess.READ | RegisterAccess.STATUS
+                vp.FAN_SPEED_EXHAUST, 41005, RegisterAccess.READ | RegisterAccess.STATUS
             ),
             U16Register(
-                vp.FAN_SPEED_EXHAUST, 41006, RegisterAccess.READ | RegisterAccess.STATUS
+                vp.FAN_SPEED_SUPPLY, 41006, RegisterAccess.READ | RegisterAccess.STATUS
             ),
             # HYPOTHESIS: the four fitted sensors follow the same order as the VMD-02RPS78
             # (exhaust, inlet, outlet, supply). It matches the reported behaviour: 41013 and
@@ -223,16 +238,24 @@ class VMD17RPS01(AiriosNode):
             # Configuration block. Same addresses the VMD-02RPS78 uses for the low and mid
             # presets; 42001/42002 (away) do not exist here. See the note on units above.
             U16Register(
-                vp.FAN_SPEED_LOW_SUPPLY, 42003, RegisterAccess.READ | RegisterAccess.WRITE
+                vp.FAN_SPEED_LOW_SUPPLY,
+                42003,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
             U16Register(
-                vp.FAN_SPEED_LOW_EXHAUST, 42004, RegisterAccess.READ | RegisterAccess.WRITE
+                vp.FAN_SPEED_LOW_EXHAUST,
+                42004,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
             U16Register(
-                vp.FAN_SPEED_MID_SUPPLY, 42005, RegisterAccess.READ | RegisterAccess.WRITE
+                vp.FAN_SPEED_MID_SUPPLY,
+                42005,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
             U16Register(
-                vp.FAN_SPEED_MID_EXHAUST, 42006, RegisterAccess.READ | RegisterAccess.WRITE
+                vp.FAN_SPEED_MID_EXHAUST,
+                42006,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
             # High is a balanced pair too, like low and mid: 42000 and 42007 both read 325.
             # Every preset holds a separate supply and exhaust value precisely so the unit can
@@ -243,13 +266,13 @@ class VMD17RPS01(AiriosNode):
             U16Register(
                 vp.FAN_SPEED_HIGH_EXHAUST,
                 42000,
-                RegisterAccess.READ | RegisterAccess.WRITE,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
                 max_value=2000,
             ),
             U16Register(
                 vp.FAN_SPEED_HIGH_SUPPLY,
                 42007,
-                RegisterAccess.READ | RegisterAccess.WRITE,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
                 max_value=2000,
             ),
             # Room temperature above which the bypass opens. Verified causally: writing 30
@@ -257,17 +280,17 @@ class VMD17RPS01(AiriosNode):
             FloatRegister(
                 vp.FREE_VENTILATION_HEATING_SETPOINT,
                 42008,
-                RegisterAccess.READ | RegisterAccess.WRITE,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
             FloatRegister(
                 vp.FROST_PROTECTION_PREHEATER_SETPOINT,
                 42010,
-                RegisterAccess.READ | RegisterAccess.WRITE,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
             FloatRegister(
                 vp.PREHEATER_SETPOINT,
                 42012,
-                RegisterAccess.READ | RegisterAccess.WRITE,
+                RegisterAccess.READ | RegisterAccess.WRITE | RegisterAccess.STATUS,
             ),
         ]
         self._add_registers(vmd_registers)
